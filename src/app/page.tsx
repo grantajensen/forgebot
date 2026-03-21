@@ -1,100 +1,164 @@
-import Image from "next/image";
+import Link from "next/link";
+import { Zap, Camera, Lightbulb, Globe, Megaphone, ArrowRight } from "lucide-react";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-background">
+      {/* Nav */}
+      <header className="border-b">
+        <div className="container mx-auto px-4 flex items-center justify-between h-14">
+          <div className="flex items-center gap-2 font-bold text-lg">
+            <Zap className="w-5 h-5" />
+            ForgeBot
+          </div>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/login"
+              className="text-sm bg-primary text-primary-foreground px-4 py-1.5 rounded-md hover:bg-primary/90 transition-colors"
+            >
+              Get Started
+            </Link>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+
+      {/* Hero */}
+      <section className="container mx-auto px-4 py-24 text-center space-y-6">
+        <div className="inline-flex items-center gap-2 bg-muted text-sm px-3 py-1 rounded-full">
+          <Zap className="w-3.5 h-3.5" /> Built with AI agents
+        </div>
+        <h1 className="text-5xl md:text-6xl font-bold max-w-3xl mx-auto leading-tight">
+          Turn <span className="text-primary">any object</span> into a
+          full startup
+        </h1>
+        <p className="text-xl text-muted-foreground max-w-xl mx-auto">
+          Upload a photo. AI agents generate your startup concept, landing page,
+          and marketing campaign in seconds.
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors text-lg"
+          >
+            Start Forging <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="border-t bg-muted/30">
+        <div className="container mx-auto px-4 py-20">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            How it works
+          </h2>
+          <div className="grid md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+            {[
+              {
+                icon: Camera,
+                title: "1. Upload",
+                desc: "Take a photo of any object around you.",
+              },
+              {
+                icon: Lightbulb,
+                title: "2. Ideate",
+                desc: "AI generates a unique startup concept inspired by your object.",
+              },
+              {
+                icon: Globe,
+                title: "3. Build",
+                desc: "Watch a full landing page get generated in real-time.",
+              },
+              {
+                icon: Megaphone,
+                title: "4. Launch",
+                desc: "Get a complete marketing campaign ready to deploy.",
+              },
+            ].map((step) => (
+              <div key={step.title} className="text-center space-y-3">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                  <step.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="font-semibold">{step.title}</h3>
+                <p className="text-sm text-muted-foreground">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="container mx-auto px-4 py-20">
+        <h2 className="text-3xl font-bold text-center mb-12">
+          Everything you need to launch
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            {
+              title: "AI Vision Analysis",
+              desc: "Claude identifies your object, its properties, target demographics, and market potential.",
+            },
+            {
+              title: "Startup Concept",
+              desc: "Get a company name, tagline, value prop, pricing model, and competitive advantage.",
+            },
+            {
+              title: "Landing Page",
+              desc: "A production-ready, responsive HTML landing page streamed in real-time.",
+            },
+            {
+              title: "Email Campaigns",
+              desc: "3-email welcome sequence ready to load into your email tool.",
+            },
+            {
+              title: "Social Media",
+              desc: "Twitter, LinkedIn, and Instagram posts tailored to your brand.",
+            },
+            {
+              title: "Ad Copy",
+              desc: "Google ad headlines and descriptions optimized for clicks.",
+            },
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="border rounded-lg p-6 space-y-2 hover:shadow-md transition-shadow"
+            >
+              <h3 className="font-semibold">{feature.title}</h3>
+              <p className="text-sm text-muted-foreground">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="border-t bg-muted/30">
+        <div className="container mx-auto px-4 py-20 text-center space-y-6">
+          <h2 className="text-3xl font-bold">Ready to forge?</h2>
+          <p className="text-muted-foreground">
+            3 free generations. No credit card required.
+          </p>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          >
+            Get Started Free <ArrowRight className="w-5 h-5" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-8">
+        <div className="container mx-auto px-4 flex items-center justify-between text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4" /> ForgeBot
+          </div>
+          <p>Built in 24 hours at a hackathon.</p>
+        </div>
       </footer>
     </div>
   );
