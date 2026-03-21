@@ -14,7 +14,7 @@ export default function ProjectDetailPage() {
   const supabase = useSupabase();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"concept" | "landing" | "marketing" | "analysis">("concept");
+  const [activeTab, setActiveTab] = useState<"concept" | "landing" | "marketing">("concept");
 
   useEffect(() => {
     async function load() {
@@ -49,7 +49,6 @@ export default function ProjectDetailPage() {
     { key: "concept", label: "Startup Brief" },
     { key: "landing", label: "Landing Page" },
     { key: "marketing", label: "Marketing" },
-    { key: "analysis", label: "Analysis" },
   ] as const;
 
   return (
@@ -144,13 +143,6 @@ export default function ProjectDetailPage() {
         <MarketingContent campaign={project.marketing_campaign} />
       )}
 
-      {activeTab === "analysis" && project.object_analysis && (
-        <div className="bg-muted/50 rounded-lg p-6">
-          <pre className="text-sm overflow-auto whitespace-pre-wrap">
-            {JSON.stringify(project.object_analysis, null, 2)}
-          </pre>
-        </div>
-      )}
     </div>
   );
 }

@@ -30,9 +30,11 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // Use getSession() for fast local JWT check in middleware (no network call).
+  // API routes still use getUser() for secure server-side validation.
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
   // Redirect unauthenticated users from protected routes
   const protectedPaths = ["/dashboard", "/forge", "/pricing"];
@@ -40,14 +42,14 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.pathname.startsWith(p)
   );
 
-  if (!user && isProtected) {
+  if (!session && isProtected) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
   }
 
   // Redirect authenticated users away from login
-  if (user && request.nextUrl.pathname === "/login") {
+  if (session && request.nextUrl.pathname === "/login") {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
