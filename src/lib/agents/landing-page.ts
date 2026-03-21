@@ -7,7 +7,7 @@ export async function generateLandingPage(
 ): Promise<ReadableStream<Uint8Array>> {
   const stream = await anthropic.messages.stream({
     model: MODEL,
-    max_tokens: 4096,
+    max_tokens: 16000,
     system: LANDING_PAGE_SYSTEM_PROMPT,
     messages: [
       {
@@ -18,6 +18,8 @@ export async function generateLandingPage(
   });
 
   const encoder = new TextEncoder();
+  let buffer = "";
+  let started = false;
 
   return new ReadableStream({
     async start(controller) {
@@ -26,7 +28,28 @@ export async function generateLandingPage(
           event.type === "content_block_delta" &&
           event.delta.type === "text_delta"
         ) {
-          controller.enqueue(encoder.encode(event.delta.text));
+          buffer += event.delta.text;
+
+          // Strip leading markdown code fence if present
+          if (!started) {
+            buffer = buffer.replace(/^```html?\s*\n?/, "");
+            if (buffer.includes("<!") || buffer.includes("<html")) {
+              started = true;
+            }
+            if (started && buffer.length > 0) {
+              controller.enqueue(encoder.encode(buffer));
+              buffer = "";
+            }
+          } else {
+            controller.enqueue(encoder.encode(event.delta.text));
+          }
+        }
+      }
+      // Strip trailing code fence
+      if (buffer.length > 0) {
+        buffer = buffer.replace(/\n?```\s*$/, "");
+        if (buffer.length > 0) {
+          controller.enqueue(encoder.encode(buffer));
         }
       }
       controller.close();
@@ -41,7 +64,7 @@ export async function generateLandingPageFull(
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 4096,
+    max_tokens: 16000,
     system: LANDING_PAGE_SYSTEM_PROMPT,
     messages: [
       {

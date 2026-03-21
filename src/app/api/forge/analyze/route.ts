@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { analyzeObject } from "@/lib/agents/vision";
 import { AnalyzeRequestSchema } from "@/lib/schemas";
 import { NextResponse } from "next/server";
@@ -14,17 +15,39 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check quota
-    const { data: profile } = await supabase
+    // Check quota (create profile if missing — trigger may not have fired)
+    let { data: profile } = await supabase
       .from("profiles")
       .select("generations_remaining, subscription_tier")
       .eq("user_id", user.id)
       .single();
 
+    if (!profile) {
+      const admin = createAdminClient();
+      const { data: newProfile, error: insertErr } = await admin
+        .from("profiles")
+        .insert({
+          user_id: user.id,
+          display_name: user.email,
+          generations_remaining: 3,
+          subscription_tier: "free",
+        })
+        .select("generations_remaining, subscription_tier")
+        .single();
+
+      if (insertErr || !newProfile) {
+        console.error("Failed to create profile:", insertErr);
+        return NextResponse.json(
+          { error: "Failed to initialize account" },
+          { status: 500 }
+        );
+      }
+      profile = newProfile;
+    }
+
     if (
-      !profile ||
-      (profile.subscription_tier === "free" &&
-        profile.generations_remaining <= 0)
+      profile.subscription_tier === "free" &&
+      profile.generations_remaining <= 0
     ) {
       return NextResponse.json(
         { error: "No generations remaining. Upgrade to Pro for unlimited." },

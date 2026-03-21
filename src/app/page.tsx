@@ -30,9 +30,6 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="container mx-auto px-4 py-24 text-center space-y-6">
-        <div className="inline-flex items-center gap-2 bg-muted text-sm px-3 py-1 rounded-full">
-          <Zap className="w-3.5 h-3.5" /> Built with AI agents
-        </div>
         <h1 className="text-5xl md:text-6xl font-bold max-w-3xl mx-auto leading-tight">
           Turn <span className="text-primary">any object</span> into a
           full startup
@@ -157,7 +154,6 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4" /> ForgeBot
           </div>
-          <p>Built in 24 hours at a hackathon.</p>
         </div>
       </footer>
     </div>

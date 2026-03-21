@@ -24,11 +24,12 @@ export async function generateStartupConcept(
   });
 
   const durationMs = Date.now() - start;
-  const text =
+  const rawText =
     response.content[0].type === "text" ? response.content[0].text : "";
   const tokensUsed =
     (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0);
 
+  const text = rawText.replace(/^```json?\s*\n?/, "").replace(/\n?```\s*$/, "");
   const parsed = StartupConceptSchema.safeParse(JSON.parse(text));
   if (!parsed.success) {
     throw new Error(

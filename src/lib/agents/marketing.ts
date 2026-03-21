@@ -13,7 +13,7 @@ export async function generateMarketingCampaign(
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 4096,
+    max_tokens: 8192,
     system: MARKETING_SYSTEM_PROMPT,
     messages: [
       {
@@ -24,12 +24,25 @@ export async function generateMarketingCampaign(
   });
 
   const durationMs = Date.now() - start;
-  const text =
+  const rawText =
     response.content[0].type === "text" ? response.content[0].text : "";
   const tokensUsed =
     (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0);
 
-  const parsed = MarketingCampaignSchema.safeParse(JSON.parse(text));
+  // Strip markdown code fences if present
+  const text = rawText.replace(/^```json?\s*\n?/, "").replace(/\n?```\s*$/, "");
+
+  let json: unknown;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    console.error("Marketing agent raw response:", rawText.slice(0, 500));
+    throw new Error(
+      `Marketing agent returned invalid JSON (response may have been truncated). stop_reason: ${response.stop_reason}`
+    );
+  }
+
+  const parsed = MarketingCampaignSchema.safeParse(json);
   if (!parsed.success) {
     throw new Error(
       `Marketing agent returned invalid JSON: ${parsed.error.message}`

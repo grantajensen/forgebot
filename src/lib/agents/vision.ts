@@ -30,11 +30,12 @@ export async function analyzeObject(
   });
 
   const durationMs = Date.now() - start;
-  const text =
+  const rawText =
     response.content[0].type === "text" ? response.content[0].text : "";
   const tokensUsed =
     (response.usage?.input_tokens ?? 0) + (response.usage?.output_tokens ?? 0);
 
+  const text = rawText.replace(/^```json?\s*\n?/, "").replace(/\n?```\s*$/, "");
   const parsed = ObjectAnalysisSchema.safeParse(JSON.parse(text));
   if (!parsed.success) {
     throw new Error(`Vision agent returned invalid JSON: ${parsed.error.message}`);
