@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { cn } from "@/lib/utils";
+import { PostHogProvider } from "./providers";
+import PostHogPageView from "./PostHogPageView";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -18,7 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cn("font-sans antialiased", inter.variable)}>
-      <body>{children}</body>
+      <body>
+        <PostHogProvider>
+          <PostHogPageView />
+          {children}
+        </PostHogProvider>
+        <Analytics />
+      </body>
     </html>
   );
 }
