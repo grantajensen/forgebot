@@ -25,8 +25,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans antialiased", inter.variable)}>
-      <body>{children}</body>
+    <html
+      lang="en"
+      className={cn(
+        "font-sans antialiased",
+        inter.variable,
+        ibmPlexSerif.variable
+      )}
+    >
+      <body>
+        <PostHogProvider>
+          <PostHogPageView />
+          {children}
+        </PostHogProvider>
+        <Analytics />
+      </body>
     </html>
   );
 }
