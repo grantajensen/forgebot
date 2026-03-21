@@ -43,14 +43,37 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        forge: {
+          DEFAULT: "hsl(var(--forge))",
+          foreground: "hsl(var(--forge-foreground))",
+          muted: "hsl(var(--forge-muted))",
+        },
+        landing: {
+          void: "hsl(var(--landing-void))",
+          metal: "hsl(var(--landing-metal))",
+          deep: "hsl(var(--landing-deep))",
+        },
+        cream: {
+          DEFAULT: "hsl(var(--cream))",
+          well: "hsl(var(--cream-well))",
+          warm: "hsl(var(--cream-warm))",
+          card: "hsl(var(--cream-card))",
+        },
+        olive: {
+          DEFAULT: "hsl(var(--olive))",
+          deep: "hsl(var(--olive-deep))",
+          foreground: "hsl(var(--olive-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        "4xl": "2rem",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        brand: ["var(--font-brand-serif)", "Georgia", "serif"],
       },
     },
   },

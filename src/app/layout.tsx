@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { IBM_Plex_Serif, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const ibmPlexSerif = IBM_Plex_Serif({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-brand-serif",
+});
 
 export const metadata: Metadata = {
   title: "ForgeBot — Turn Any Object Into a Startup",
   description:
-    "Upload a photo of any object and AI agents will generate a full startup: landing page, marketing campaign, and business plan.",
+    "Upload a photo of any object and get a full startup in seconds: concept, landing page, marketing campaign, and business plan.",
 };
 
 export default function RootLayout({
@@ -17,7 +22,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans antialiased", inter.variable)}>
+    <html
+      lang="en"
+      className={cn(
+        "font-sans antialiased",
+        inter.variable,
+        ibmPlexSerif.variable
+      )}
+    >
       <body>{children}</body>
     </html>
   );
