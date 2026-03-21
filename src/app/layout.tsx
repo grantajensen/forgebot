@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Serif, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { cn } from "@/lib/utils";
+import { PostHogProvider } from "./providers";
+import PostHogPageView from "./PostHogPageView";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -22,14 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={cn(
-        "font-sans antialiased",
-        inter.variable,
-        ibmPlexSerif.variable
-      )}
-    >
+    <html lang="en" className={cn("font-sans antialiased", inter.variable)}>
       <body>{children}</body>
     </html>
   );

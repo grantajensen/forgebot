@@ -7,7 +7,7 @@ export async function generateLandingPage(
 ): Promise<ReadableStream<Uint8Array>> {
   const stream = await anthropic.messages.stream({
     model: MODEL,
-    max_tokens: 16000,
+    max_tokens: 64000,
     system: LANDING_PAGE_SYSTEM_PROMPT,
     messages: [
       {
@@ -64,7 +64,7 @@ export async function generateLandingPageFull(
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 16000,
+    max_tokens: 64000,
     system: LANDING_PAGE_SYSTEM_PROMPT,
     messages: [
       {

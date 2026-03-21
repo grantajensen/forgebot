@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSupabase } from "@/providers/supabase-provider";
 import type { Project } from "@/lib/schemas";
-import { Zap, Plus, Loader2 } from "lucide-react";
+import { Zap, Plus, Loader2, Trash2 } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
   uploading: "bg-yellow-100 text-yellow-800",
@@ -19,12 +19,23 @@ export default function DashboardPage() {
   const supabase = useSupabase();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(e: React.MouseEvent, projectId: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this project?")) return;
+    setDeleting(projectId);
+    await supabase.from("projects").delete().eq("id", projectId);
+    setProjects((prev) => prev.filter((p) => p.id !== projectId));
+    setDeleting(null);
+  }
 
   useEffect(() => {
     async function load() {
       const { data } = await supabase
         .from("projects")
-        .select("*")
+        .select("id, name, status, original_image_url, created_at")
         .order("created_at", { ascending: false });
       setProjects((data as unknown as Project[]) || []);
       setLoading(false);
@@ -82,6 +93,7 @@ export default function DashboardPage() {
                 <img
                   src={project.original_image_url}
                   alt={project.name}
+                  loading="lazy"
                   className="w-full h-40 object-cover"
                 />
               ) : (
@@ -92,19 +104,27 @@ export default function DashboardPage() {
               <div className="p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium truncate">{project.name}</h3>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
-                      STATUS_COLORS[project.status] || "bg-muted"
-                    }`}
-                  >
-                    {project.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-xs px-2 py-0.5 rounded-full ${
+                        STATUS_COLORS[project.status] || "bg-muted"
+                      }`}
+                    >
+                      {project.status}
+                    </span>
+                    <button
+                      onClick={(e) => handleDelete(e, project.id)}
+                      disabled={deleting === project.id}
+                      className="text-muted-foreground hover:text-red-600 transition-colors p-1 rounded-md hover:bg-red-50"
+                    >
+                      {deleting === project.id ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-                {project.startup_concept && (
-                  <p className="text-sm text-muted-foreground truncate">
-                    {project.startup_concept.tagline}
-                  </p>
-                )}
                 <p className="text-xs text-muted-foreground">
                   {new Date(project.created_at).toLocaleDateString()}
                 </p>
