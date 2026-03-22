@@ -188,12 +188,31 @@ export function useForge() {
 
         if (reader) {
           let html = "";
+          let lastFlush = 0;
+          let timer: ReturnType<typeof setTimeout> | null = null;
+          const THROTTLE_MS = 500;
+
+          const flush = () => {
+            if (timer) { clearTimeout(timer); timer = null; }
+            lastFlush = Date.now();
+            setState((s) => ({ ...s, landingPageHtml: html }));
+          };
+
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
             html += decoder.decode(value, { stream: true });
-            setState((s) => ({ ...s, landingPageHtml: html }));
+
+            const elapsed = Date.now() - lastFlush;
+            if (elapsed >= THROTTLE_MS) {
+              flush();
+            } else if (!timer) {
+              timer = setTimeout(flush, THROTTLE_MS - elapsed);
+            }
           }
+
+          if (timer) clearTimeout(timer);
+          flush();
         }
 
         // 5. Marketing
