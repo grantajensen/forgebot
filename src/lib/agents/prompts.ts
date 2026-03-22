@@ -20,7 +20,7 @@ The startup should be creative but plausible — something that could actually g
 Em-dashes may appear in these instructions only; do not use em-dashes (the — character) in any JSON string values you output.
 You MUST respond with valid JSON matching this exact structure:
 {
-  "company_name": "string - catchy, memorable startup name",
+  "company_name": "string - catchy, memorable startup name (do NOT use two-word concatenations like 'ShadeStory', 'TrailBlaze', 'SnapFlow' etc.)",
   "tagline": "string - punchy tagline under 10 words",
   "elevator_pitch": "string - compelling 2-3 sentence pitch. DO NOT USE EM-DASHES. DO NOT USE ANY PHRASING LIKE: not X, but Y. Make it sound natural.",
   "value_proposition": "string - clear statement of the unique value offered",
