@@ -1,17 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useSupabase } from "@/providers/supabase-provider";
 import { Zap, LogOut } from "lucide-react";
 
 export function NavBar() {
-  const supabase = useSupabase();
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+  const handleSignOut = () => {
+    window.location.href = "/auth/signout";
   };
 
   return (
