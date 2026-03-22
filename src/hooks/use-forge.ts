@@ -3,6 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useSupabase } from "@/providers/supabase-provider";
 import type { ObjectAnalysis, StartupConcept, MarketingCampaign } from "@/lib/schemas";
+import { ensureVisionCompatibleImage } from "@/lib/heic-to-jpeg";
 
 export type ForgeStep =
   | "idle"
@@ -84,6 +85,8 @@ export function useForge() {
           );
         }
 
+        const imageFile = await ensureVisionCompatibleImage(file);
+
         // Create project row
         const { data: project, error: projErr } = await supabase
           .from("projects")
@@ -97,10 +100,10 @@ export function useForge() {
         setState((s) => ({ ...s, projectId }));
 
         // Upload to storage
-        const filePath = `${user.id}/${projectId}/${file.name}`;
+        const filePath = `${user.id}/${projectId}/${imageFile.name}`;
         const { error: uploadErr } = await supabase.storage
           .from("project-images")
-          .upload(filePath, file);
+          .upload(filePath, imageFile);
 
         if (uploadErr) throw new Error("Image upload failed");
 
@@ -114,7 +117,7 @@ export function useForge() {
           .eq("id", projectId);
 
         // Convert to base64
-        const base64 = await fileToBase64(file);
+        const base64 = await fileToBase64(imageFile);
 
         // 2. Analyze
         setState((s) => ({ ...s, step: "analyzing" }));
@@ -124,7 +127,7 @@ export function useForge() {
           body: JSON.stringify({
             project_id: projectId,
             image_base64: base64,
-            media_type: file.type,
+            media_type: imageFile.type || "image/jpeg",
           }),
           signal: abortRef.current.signal,
         });

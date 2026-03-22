@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useState, useRef } from "react";
-import { Upload, X, ImageIcon } from "lucide-react";
+import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
+import {
+  ensureVisionCompatibleImage,
+  isHeicLike,
+  isLikelyRasterImage,
+} from "@/lib/heic-to-jpeg";
 
 interface ImageUploaderProps {
   onFileSelected: (file: File) => void;
@@ -14,22 +19,42 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
   const [preview, setPreview] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = useCallback(
-    (file: File) => {
+    async (file: File) => {
       setError(null);
-      if (!file.type.startsWith("image/")) {
-        setError("Please upload an image file");
+      if (!isLikelyRasterImage(file)) {
+        setError("Please upload an image file (including iPhone HEIC / HEIF)");
         return;
       }
       if (file.size > MAX_SIZE) {
         setError("Image must be under 4MB");
         return;
       }
-      const url = URL.createObjectURL(file);
+
+      let ready = file;
+      if (isHeicLike(file)) {
+        setConverting(true);
+        try {
+          ready = await ensureVisionCompatibleImage(file);
+        } catch (e) {
+          setConverting(false);
+          setError(e instanceof Error ? e.message : "Could not convert this photo");
+          return;
+        }
+        setConverting(false);
+      }
+
+      if (ready.size > MAX_SIZE) {
+        setError("Converted image must be under 4MB — try a smaller photo");
+        return;
+      }
+
+      const url = URL.createObjectURL(ready);
       setPreview(url);
-      onFileSelected(file);
+      onFileSelected(ready);
     },
     [onFileSelected]
   );
@@ -47,6 +72,7 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
   const clear = () => {
     setPreview(null);
     setError(null);
+    setConverting(false);
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -76,7 +102,7 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
           }}
           onDragLeave={() => setDragActive(false)}
           onDrop={handleDrop}
-          onClick={() => inputRef.current?.click()}
+          onClick={() => !converting && !disabled && inputRef.current?.click()}
           className={`
             border-2 border-dashed rounded-lg p-12 text-center cursor-pointer
             transition-colors duration-200
@@ -85,21 +111,27 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
                 ? "border-primary bg-primary/5"
                 : "border-muted-foreground/25 hover:border-primary/50"
             }
-            ${disabled ? "opacity-50 pointer-events-none" : ""}
+            ${disabled || converting ? "opacity-50 pointer-events-none" : ""}
           `}
         >
           <div className="flex flex-col items-center gap-3">
-            {dragActive ? (
+            {converting ? (
+              <Loader2 className="w-10 h-10 text-primary animate-spin" />
+            ) : dragActive ? (
               <Upload className="w-10 h-10 text-primary" />
             ) : (
               <ImageIcon className="w-10 h-10 text-muted-foreground" />
             )}
             <div>
               <p className="font-medium">
-                {dragActive ? "Drop your image here" : "Upload a photo of any object"}
+                {converting
+                  ? "Converting HEIF / HEIC photo…"
+                  : dragActive
+                    ? "Drop your image here"
+                    : "Upload a photo of any object"}
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                Drag & drop or click to browse. Max 4MB.
+                JPG, PNG, WebP, or iPhone HEIC / HEIF. Max 4MB.
               </p>
             </div>
           </div>
@@ -113,13 +145,13 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,.heic,.heif"
         className="hidden"
         onChange={(e) => {
           const file = e.target.files?.[0];
           if (file) handleFile(file);
         }}
-        disabled={disabled}
+        disabled={disabled || converting}
       />
     </div>
   );
