@@ -28,10 +28,13 @@ export async function generateLandingPage(
           event.type === "content_block_delta" &&
           event.delta.type === "text_delta"
         ) {
-          buffer += event.delta.text;
+          const text = event.delta.text;
 
-          // Strip leading markdown code fence if present
+          // Only buffer the preamble (fence strip) until HTML starts; after that
+          // stream deltas directly — otherwise buffer holds a full copy and the
+          // trailing flush would duplicate the entire document.
           if (!started) {
+            buffer += text;
             buffer = buffer.replace(/^```html?\s*\n?/, "");
             if (buffer.includes("<!") || buffer.includes("<html")) {
               started = true;
@@ -41,7 +44,7 @@ export async function generateLandingPage(
               buffer = "";
             }
           } else {
-            controller.enqueue(encoder.encode(event.delta.text));
+            controller.enqueue(encoder.encode(text));
           }
         }
       }
