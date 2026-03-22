@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSupabase } from "@/providers/supabase-provider";
 import type { Project } from "@/lib/schemas";
-import { Zap, Plus, Loader2, Trash2 } from "lucide-react";
+import { Plus, Loader2, Trash2, Hammer } from "lucide-react";
+import Image from "next/image";
 
 const STATUS_COLORS: Record<string, string> = {
   uploading: "bg-yellow-100 text-yellow-800",
@@ -65,7 +66,7 @@ export default function DashboardPage() {
 
       {projects.length === 0 ? (
         <div className="text-center py-20 space-y-4">
-          <Zap className="w-12 h-12 mx-auto text-muted-foreground" />
+          <Image src="/icon.png" alt="ForgeBot" width={48} height={48} className="mx-auto opacity-50" />
           <h2 className="text-xl font-medium">No projects yet</h2>
           <p className="text-muted-foreground">
             Upload a photo of any object to forge your first startup.
@@ -74,7 +75,7 @@ export default function DashboardPage() {
             href="/forge"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90 transition-colors"
           >
-            <Zap className="w-4 h-4" /> Start Forging
+            <Hammer className="w-4 h-4" /> Start Forging
           </Link>
         </div>
       ) : (
@@ -98,7 +99,7 @@ export default function DashboardPage() {
                 />
               ) : (
                 <div className="w-full h-40 bg-muted flex items-center justify-center">
-                  <Zap className="w-8 h-8 text-muted-foreground" />
+                  <Hammer className="w-8 h-8 text-muted-foreground" />
                 </div>
               )}
               <div className="p-4 space-y-2">

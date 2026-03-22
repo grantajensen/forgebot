@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Zap, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -47,10 +48,9 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-sm mx-auto space-y-8 px-4">
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <Zap className="w-8 h-8 text-primary" />
-            <h1 className="text-3xl font-bold">ForgeBot</h1>
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <Image src="/logo.png" alt="ForgeBot" width={180} height={46} priority />
           </div>
           <p className="text-muted-foreground">
             Turn any object into a startup

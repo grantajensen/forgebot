@@ -7,7 +7,7 @@ import { ImageUploader } from "@/components/image-uploader";
 import { ForgeStepper } from "@/components/forge-stepper";
 import { LandingPagePreview } from "@/components/landing-page-preview";
 import { MarketingContent } from "@/components/marketing-tabs";
-import { Zap, RotateCcw } from "lucide-react";
+import { Hammer, RotateCcw } from "lucide-react";
 
 export default function ForgePage() {
   const router = useRouter();
@@ -39,7 +39,7 @@ export default function ForgePage() {
               onClick={handleStart}
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors text-lg"
             >
-              <Zap className="w-5 h-5" />
+              <Hammer className="w-5 h-5" />
               Start Forging
             </button>
           </div>

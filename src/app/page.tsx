@@ -6,18 +6,8 @@ import {
   Globe,
   Megaphone,
   ArrowRight,
-  Hammer,
 } from "lucide-react";
-
-function BrandWordmark({ className }: { className?: string }) {
-  return (
-    <span
-      className={`font-brand font-semibold tracking-tight text-zinc-800 ${className ?? ""}`}
-    >
-      ForgeBot
-    </span>
-  );
-}
+import Image from "next/image";
 
 type StepCardProps = {
   label: string;
@@ -53,9 +43,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-cream text-zinc-900 antialiased">
       <header className="sticky top-0 z-20 border-b border-zinc-900/[0.06] bg-cream/85 backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Hammer className="h-5 w-5 text-olive" strokeWidth={2} aria-hidden />
-            <BrandWordmark />
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="ForgeBot" width={140} height={36} priority />
           </Link>
           <div className="flex items-center gap-3 text-sm">
             <Link
@@ -228,10 +217,7 @@ export default function HomePage() {
 
       <footer className="border-t border-zinc-900/[0.06] py-10">
         <div className="mx-auto flex max-w-6xl items-center px-4 sm:px-6">
-          <div className="flex items-center gap-2">
-            <Hammer className="h-4 w-4 text-olive" aria-hidden />
-            <BrandWordmark className="text-base" />
-          </div>
+          <Image src="/logo.png" alt="ForgeBot" width={120} height={30} />
         </div>
       </footer>
     </div>

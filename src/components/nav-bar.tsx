@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Settings, CreditCard, LogOut } from "lucide-react";
+import { Settings, LogOut } from "lucide-react";
+import Image from "next/image";
 
 export function NavBar() {
   const supabase = useSupabase();
@@ -58,12 +59,8 @@ export function NavBar() {
   return (
     <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 flex items-center justify-between h-14">
-        <Link
-          href="/dashboard"
-          className="flex items-center gap-2 font-bold text-lg"
-        >
-          <Zap className="w-5 h-5 text-primary" />
-          ForgeBot
+        <Link href="/dashboard" className="flex items-center">
+          <Image src="/logo.png" alt="ForgeBot" width={120} height={30} priority />
         </Link>
 
         <nav className="flex items-center gap-4">
