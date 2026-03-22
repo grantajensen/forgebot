@@ -14,6 +14,8 @@ export type ForgeStep =
   | "complete"
   | "error";
 
+type ForgeErrorReason = "quota" | null;
+
 interface ForgeState {
   step: ForgeStep;
   projectId: string | null;
@@ -22,6 +24,14 @@ interface ForgeState {
   landingPageHtml: string;
   marketingCampaign: MarketingCampaign | null;
   error: string | null;
+  errorReason: ForgeErrorReason;
+}
+
+class ForgeQuotaError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ForgeQuotaError";
+  }
 }
 
 export function useForge() {
@@ -34,11 +44,12 @@ export function useForge() {
     landingPageHtml: "",
     marketingCampaign: null,
     error: null,
+    errorReason: null,
   });
   const abortRef = useRef<AbortController | null>(null);
 
-  const setError = (error: string) =>
-    setState((s) => ({ ...s, step: "error", error }));
+  const setForgeError = (error: string, errorReason: ForgeErrorReason = null) =>
+    setState((s) => ({ ...s, step: "error", error, errorReason }));
 
   const startForge = useCallback(
     async (file: File) => {
@@ -46,12 +57,32 @@ export function useForge() {
         abortRef.current = new AbortController();
 
         // 1. Upload image
-        setState((s) => ({ ...s, step: "uploading", error: null }));
+        setState((s) => ({
+          ...s,
+          step: "uploading",
+          error: null,
+          errorReason: null,
+        }));
 
         const {
           data: { user },
         } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
+
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("generations_remaining, subscription_tier")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (
+          profile?.subscription_tier === "free" &&
+          profile.generations_remaining <= 0
+        ) {
+          throw new ForgeQuotaError(
+            "You've run out of tokens on the free plan."
+          );
+        }
 
         // Create project row
         const { data: project, error: projErr } = await supabase
@@ -99,8 +130,21 @@ export function useForge() {
         });
 
         if (!analyzeRes.ok) {
-          const err = await analyzeRes.json();
-          throw new Error(err.error || "Analysis failed");
+          let errBody: { error?: string; code?: string } = {};
+          try {
+            errBody = await analyzeRes.json();
+          } catch {
+            /* non-JSON error body */
+          }
+          if (
+            errBody.code === "QUOTA_EXHAUSTED" ||
+            analyzeRes.status === 403
+          ) {
+            throw new ForgeQuotaError(
+              "You've run out of tokens on the free plan."
+            );
+          }
+          throw new Error(errBody.error || "Analysis failed");
         }
 
         const { data: objectAnalysis } = await analyzeRes.json();
@@ -171,7 +215,13 @@ export function useForge() {
         }));
       } catch (err) {
         if (err instanceof Error && err.name === "AbortError") return;
-        setError(err instanceof Error ? err.message : "Something went wrong");
+        if (err instanceof ForgeQuotaError) {
+          setForgeError(err.message, "quota");
+          return;
+        }
+        setForgeError(
+          err instanceof Error ? err.message : "Something went wrong"
+        );
       }
     },
     [supabase]
@@ -187,6 +237,7 @@ export function useForge() {
       landingPageHtml: "",
       marketingCampaign: null,
       error: null,
+      errorReason: null,
     });
   }, []);
 

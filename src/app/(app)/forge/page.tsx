@@ -55,14 +55,31 @@ export default function ForgePage() {
 
       {/* Error state */}
       {forge.step === "error" && (
-        <div className="text-center space-y-4 py-8">
-          <p className="text-destructive font-medium">{forge.error}</p>
-          <button
-            onClick={forge.reset}
-            className="inline-flex items-center gap-2 border px-4 py-2 rounded-md hover:bg-muted transition-colors"
-          >
-            <RotateCcw className="w-4 h-4" /> Start Over
-          </button>
+        <div className="text-center space-y-4 py-8 max-w-md mx-auto">
+          <p className="text-destructive font-medium text-lg">{forge.error}</p>
+          {forge.errorReason === "quota" && (
+            <p className="text-muted-foreground text-sm">
+              Upgrade to Pro for unlimited forges and keep building.
+            </p>
+          )}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-2">
+            {forge.errorReason === "quota" && (
+              <button
+                type="button"
+                onClick={() => router.push("/pricing")}
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
+              >
+                Get Pro
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={forge.reset}
+              className="inline-flex items-center justify-center gap-2 border px-4 py-2 rounded-md hover:bg-muted transition-colors w-full sm:w-auto"
+            >
+              <RotateCcw className="w-4 h-4" /> Start Over
+            </button>
+          </div>
         </div>
       )}
 

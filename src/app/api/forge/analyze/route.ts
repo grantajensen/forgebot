@@ -50,7 +50,10 @@ export async function POST(request: Request) {
       profile.generations_remaining <= 0
     ) {
       return NextResponse.json(
-        { error: "No generations remaining. Upgrade to Pro for unlimited." },
+        {
+          error: "No generations remaining. Upgrade to Pro for unlimited.",
+          code: "QUOTA_EXHAUSTED",
+        },
         { status: 403 }
       );
     }
